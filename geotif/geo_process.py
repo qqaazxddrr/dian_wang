@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import misc
-from PIL import Image
-from libtiff import TIFF 
+
+
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
