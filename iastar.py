@@ -169,10 +169,12 @@ class AStar:
             current.out_openset = True
             current.closed = True
             for neighbor in map(lambda n: searchNodes[n], self.neighbors(current.data)):
-                if not self.road_condition(current.data, neighbor.data):
-                    continue
-                if not self.com_condition(current.data, neighbor.data):
-                    continue
+                if self.roads is not None:
+                    if not self.road_condition(current.data, neighbor.data):
+                        continue
+                if self.com_lines is not None:
+                    if not self.com_condition(current.data, neighbor.data):
+                        continue
                 if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
                     continue
                 if not current.start:

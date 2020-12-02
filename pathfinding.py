@@ -7,7 +7,7 @@ import time
 
 def main():
     time1=time.time()
-    gridMap = np.load('geotif/sketch_merged.npy')
+    gridMap = np.load('geotif/sampled_sketch.npy')
     time2=time.time()
     print("图片加载完毕，耗时{}".format(time2-time1))
     maze = cv2.inRange(gridMap, 2.9, 3.1)
