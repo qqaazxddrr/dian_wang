@@ -72,11 +72,11 @@ class AStar:
             return v
 
     @abstractmethod
-    def __init__(self, roads, com_lines, map):
+    def __init__(self, roads, com_lines, gridMap):
         self.close_set = set()
         self.roads = roads
         self.com_lines = com_lines
-        self.map = map
+        self.map = gridMap
 
     # 判断路径中是否存在第四类地块
     def is_forbiddenzoom_in_between(self, n1, n2):
