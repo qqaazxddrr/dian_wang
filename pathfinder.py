@@ -49,4 +49,4 @@ class pathfinder(AStar):
         """
         x, y = node
         neighbors = [(x+neiX, y+neiY) for neiX, neiY in self.neighbors_coordinate]
-        return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height and self.maze[ny][nx] == 0]
+        return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.height and 0 <= ny < self.width and self.maze[nx][ny] == 0]
