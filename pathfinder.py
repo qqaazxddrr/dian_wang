@@ -28,7 +28,7 @@ class pathfinder(AStar):
     def __init__(self, maze, neigh_range, sample_n, gridMap, roads=None, com_lines=None):
         super().__init__(roads, com_lines, gridMap)
         self.maze = maze
-        self.width, self.height = np.array(maze).shape
+        self.height, self.width = np.array(maze).shape
         self.neighbors_coordinate = neighbors_generator(neigh_range[0], neigh_range[1], sample_n)
 
     def heuristic_cost_estimate(self, n1, n2):
