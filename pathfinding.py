@@ -12,8 +12,8 @@ def main():
     print("图片加载完毕，耗时{}".format(time2-time1))
     maze = cv2.inRange(gridMap, 2.9, 3.1)
     start = (9044,0)
-    end = (0,11590)
-    neigh_range = (300, 350)
+    end = (9000,7000)
+    neigh_range = (500, 600)
     sample_n = 20
 #     road1 = [(776, 523), (1425, 393), (2930, 122)]
 #     road2 = [(1285, 166), (1425, 393), (1880, 1075), (2020, 1973), (2086, 3737)]
