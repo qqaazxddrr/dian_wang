@@ -9,8 +9,8 @@ import time
 fp = 'sketch.npy'
 
 sketch = np.load(fp)
-new_row = round(sketch.shape[0] / 3)
-new_col = round(sketch.shape[1] / 3)
+new_row = round(sketch.shape[0] / 3)-1
+new_col = round(sketch.shape[1] / 3)-1
 
 sampled_sketch = np.zeros([new_row, new_col])
 
