@@ -15,9 +15,9 @@ def main():
     maze = cv2.inRange(gridMap, 2.9, 3.1)
     # start = (9044,0)
     # end = (9000,2000)
-    start = (1400, 3500)
-    end = (2200, 900)
-    neigh_range = (500, 600)
+    start = (0, 3999)
+    end = (2500, 1000)
+    neigh_range = (100, 200)
     sample_n = 20
     #     road1 = [(776, 523), (1425, 393), (2930, 122)]
     #     road2 = [(1285, 166), (1425, 393), (1880, 1075), (2020, 1973), (2086, 3737)]
@@ -25,7 +25,8 @@ def main():
     # forbidden =
 
     #     finder = pathfinder(maze, neigh_range, sample_n, [road1, road2], [com_line], gridMap)
-    finder = pathfinder(maze, neigh_range, sample_n, gridMap)
+    print("start:{},end:{}".format(maze[start[0],start[1]],maze[end[0],end[1]]))
+    finder = pathfinder(maze, neigh_range, sample_n)
     path = list(finder.astar(start, end))
     time3 = time.time()
     print("寻路完毕,耗时{}".format(time3 - time2))
@@ -41,9 +42,9 @@ def main():
         cv2.circle(maze_viz, p, 5, (0, 255, 0))
     plt.imshow(maze_viz)
 
-    plt.savefig("fig/fig1202_{}_{}.jpg".format(neigh_range[0], neigh_range[1]))
+    plt.savefig("fig/fig1208_{}_{}.jpg".format(neigh_range[0], neigh_range[1]))
     plt.show()
-    np.save("path_1202.npy", np.array(path))
+    np.save("path_1208.npy", np.array(path))
     time4 = time.time()
     print("算法完毕,总耗时{}".format(time4 - time1))
 

@@ -22,7 +22,7 @@ for i in range(new_row):
         anchor = np.array([i, j])
         type_list = []
         for unit in sample_core:
-            index = anchor + unit
+            index = anchor*3 + unit
             type_list.append(sketch[index[0], index[1]])
         if 4 in type_list:
             sampled_sketch[anchor[0], anchor[1]] = 4
@@ -37,5 +37,8 @@ for i in range(new_row):
         time2 = time.time()
         print("row:{},time:{}".format(i, time2 - time1))
         time1 = time2
+
+        
+        
 
 cv2.imwrite("sampled_sketch_a.png", sampled_sketch)

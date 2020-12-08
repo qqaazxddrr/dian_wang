@@ -25,7 +25,7 @@ class pathfinder(AStar):
     """sample use of the astar algorithm. In this exemple we work on a maze made of ascii characters,
     and a 'node' is just a (x,y) tuple that represents a reachable position"""
 
-    def __init__(self, maze, neigh_range, sample_n, gridMap, roads=None, com_lines=None):
+    def __init__(self, maze, neigh_range, sample_n, gridMap=None, roads=None, com_lines=None):
         super().__init__(roads, com_lines, gridMap)
         self.maze = maze
         self.height, self.width = np.array(maze).shape

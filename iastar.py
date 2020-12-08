@@ -175,12 +175,13 @@ class AStar:
                 if self.com_lines is not None:
                     if not self.com_condition(current.data, neighbor.data):
                         continue
-                # if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
-                #     continue
-                if not current.start:
-                    degree = angle_computing(neighbor.data, current.data)
-                    if abs(degree - current.father_angle) >= 90:
+                if self.map is not None:
+                    if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
                         continue
+                # if not current.start:
+                #     degree = angle_computing(neighbor.data, current.data)
+                #     if abs(degree - current.father_angle) >= 90:
+                #         continue
                 if neighbor.closed:
                     continue
                 tentative_gscore = current.gscore + \
@@ -191,7 +192,7 @@ class AStar:
                 neighbor.gscore = tentative_gscore
                 neighbor.fscore = tentative_gscore + \
                                   self.heuristic_cost_estimate(neighbor.data, goal)
-                neighbor.father_angle = angle_computing(neighbor.data, current.data)
+                # neighbor.father_angle = angle_computing(neighbor.data, current.data)
                 if neighbor.out_openset:
                     neighbor.out_openset = False
                     heappush(openSet, neighbor)
