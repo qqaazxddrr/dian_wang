@@ -158,6 +158,7 @@ class AStar:
             return reversed(list(_gen()))
 
     def astar(self, start, goal, reversePath=False):
+        process_max = 0
         pbar = tqdm(total=100)
         dis_total = self.distance_between(start,goal)
         if self.is_goal_reached(start, goal):
@@ -171,11 +172,17 @@ class AStar:
             current = heappop(openSet)
             # 进度条显示
             dis_now = self.distance_between(current.data,goal)
-            pbar.n = round((1-dis_now/dis_total)*100)
-            pbar.refresh()
+            process_now = round((1-dis_now/dis_total)*100)
+            if process_now>process_max:
+                process_max=process_now
+                pbar.n = process_now
+                pbar.refresh()
             # -------------- #
             self.close_set.add(current.data)
             if self.is_goal_reached(current.data, goal):
+                pbar.n = 100
+                pbar.refresh()
+                pbar.close()
                 return self.reconstruct_path(current, reversePath)
             current.out_openset = True
             current.closed = True
