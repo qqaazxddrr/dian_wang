@@ -6,6 +6,7 @@ from heapq import heappush, heappop, heapify
 import math
 import numpy as np
 from bresenham import bresenham
+from tqdm import tqdm
 
 Infinite = float('inf')
 
@@ -83,7 +84,7 @@ class AStar:
     def is_forbiddenzoom_in_between(self, n1, n2):
         route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
         for p in route:
-            if self.map[p[0], p[1]] == 4:
+            if self.map[p[1]][p[0]] == 4:
                 return True
         return False
 
@@ -157,6 +158,8 @@ class AStar:
             return reversed(list(_gen()))
 
     def astar(self, start, goal, reversePath=False):
+        pbar = tqdm(total=100)
+        dis_total = self.distance_between(start,goal)
         if self.is_goal_reached(start, goal):
             return [start]
         searchNodes = AStar.SearchNodeDict()
@@ -166,6 +169,11 @@ class AStar:
         heappush(openSet, startNode)
         while openSet:
             current = heappop(openSet)
+            # 进度条显示
+            dis_now = self.distance_between(current.data,goal)
+            pbar.n = round((1-dis_now/dis_total)*100)
+            pbar.refresh()
+            # -------------- #
             self.close_set.add(current.data)
             if self.is_goal_reached(current.data, goal):
                 return self.reconstruct_path(current, reversePath)

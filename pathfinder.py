@@ -51,4 +51,5 @@ class pathfinder(AStar):
         neighbors = [(x+neiX, y+neiY) for neiX, neiY in self.neighbors_coordinate]
         # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.height and 0 <= ny < self.width and self.maze[nx][ny] == 0]
         # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height and self.maze[nx][ny] == 0]
-        return [i for i in [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height] if self.maze[i[0]][i[1]]==0]
+        filter1 = [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height]
+        return [i for i in filter1 if self.maze[i[1]][i[0]]==0]
