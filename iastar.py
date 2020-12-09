@@ -72,11 +72,12 @@ class AStar:
             return v
 
     @abstractmethod
-    def __init__(self, roads, com_lines, gridMap):
+    def __init__(self, neigh_range, roads, com_lines, gridMap):
         self.close_set = set()
         self.roads = roads
         self.com_lines = com_lines
         self.map = gridMap
+        self.neigh_range = neigh_range
 
     # 判断路径中是否存在第四类地块
     def is_forbiddenzoom_in_between(self, n1, n2):
@@ -139,7 +140,9 @@ class AStar:
 
     def is_goal_reached(self, current, goal):
         """ returns true when we can consider that 'current' is the goal"""
-        return current == goal
+        dis = self.distance_between(current, goal)
+        if self.neigh_range[0] <= dis <= self.neigh_range[1]:
+            return True
 
     def reconstruct_path(self, last, reversePath=False):
         def _gen():
@@ -168,7 +171,8 @@ class AStar:
                 return self.reconstruct_path(current, reversePath)
             current.out_openset = True
             current.closed = True
-            for neighbor in map(lambda n: searchNodes[n], self.neighbors(current.data)):
+            nei_tmp = self.neighbors(current.data)
+            for neighbor in map(lambda n: searchNodes[n], nei_tmp):
                 if self.roads is not None:
                     if not self.road_condition(current.data, neighbor.data):
                         continue
@@ -178,10 +182,10 @@ class AStar:
                 if self.map is not None:
                     if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
                         continue
-                # if not current.start:
-                #     degree = angle_computing(neighbor.data, current.data)
-                #     if abs(degree - current.father_angle) >= 90:
-                #         continue
+                if not current.start:
+                    degree = angle_computing(neighbor.data, current.data)
+                    if abs(degree - current.father_angle) >= 90:
+                        continue
                 if neighbor.closed:
                     continue
                 tentative_gscore = current.gscore + \
@@ -192,7 +196,7 @@ class AStar:
                 neighbor.gscore = tentative_gscore
                 neighbor.fscore = tentative_gscore + \
                                   self.heuristic_cost_estimate(neighbor.data, goal)
-                # neighbor.father_angle = angle_computing(neighbor.data, current.data)
+                neighbor.father_angle = angle_computing(neighbor.data, current.data)
                 if neighbor.out_openset:
                     neighbor.out_openset = False
                     heappush(openSet, neighbor)

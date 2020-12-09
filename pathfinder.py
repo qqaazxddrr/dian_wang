@@ -26,7 +26,7 @@ class pathfinder(AStar):
     and a 'node' is just a (x,y) tuple that represents a reachable position"""
 
     def __init__(self, maze, neigh_range, sample_n, gridMap=None, roads=None, com_lines=None):
-        super().__init__(roads, com_lines, gridMap)
+        super().__init__(neigh_range, roads, com_lines, gridMap)
         self.maze = maze
         self.height, self.width = np.array(maze).shape
         self.neighbors_coordinate = neighbors_generator(neigh_range[0], neigh_range[1], sample_n)
@@ -50,4 +50,5 @@ class pathfinder(AStar):
         x, y = node
         neighbors = [(x+neiX, y+neiY) for neiX, neiY in self.neighbors_coordinate]
         # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.height and 0 <= ny < self.width and self.maze[nx][ny] == 0]
-        return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height and self.maze[nx][ny] == 0]
+        # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height and self.maze[nx][ny] == 0]
+        return [i for i in [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height] if self.maze[i[0]][i[1]]==0]

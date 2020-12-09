@@ -8,16 +8,16 @@ import time
 
 def main():
     time1 = time.time()
-    # gridMap = np.load('geotif/sampled_sketch.npy')
-    gridMap = np.load('map.npy')
+    gridMap = np.load('geotif/sampled_sketch.npy')
+    # gridMap = np.load('map.npy')
     time2 = time.time()
     print("图片加载完毕，耗时{}".format(time2 - time1))
     maze = cv2.inRange(gridMap, 2.9, 3.1)
-    # start = (9044,0)
-    # end = (9000,2000)
-    start = (0, 3999)
-    end = (2500, 1000)
-    neigh_range = (100, 200)
+    start = (9044,0)
+    end = (9000,2000)
+    # start = (0, 0)
+    # end = (2500, 1000)
+    neigh_range = (500, 550)
     sample_n = 20
     #     road1 = [(776, 523), (1425, 393), (2930, 122)]
     #     road2 = [(1285, 166), (1425, 393), (1880, 1075), (2020, 1973), (2086, 3737)]
