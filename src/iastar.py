@@ -194,9 +194,9 @@ class AStar:
                 if self.com_lines is not None:
                     if not self.com_condition(current.data, neighbor.data):
                         continue
-                if self.map is not None:
-                    if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
-                        continue
+                # if self.map is not None:
+                #     if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
+                #         continue
                 if not current.start:
                     degree = angle_computing(neighbor.data, current.data)
                     if abs(degree - current.father_angle) >= 90:
