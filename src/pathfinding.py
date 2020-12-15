@@ -60,8 +60,8 @@ if __name__ == "__main__":
     neigh_range = (200, 250)
     sample_n = 20
     time1 = time.time()
-    gridMap = np.load('../res/v1/sampled_sketch.npy')
-    background = cv2.imread("../res/v1/sampled_map.png")
+    gridMap = np.load('../../res/v1/sampled_sketch.npy')
+    background = cv2.imread("../../res/v1/sampled_map.png")
     background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
     time2 = time.time()
     print("图片加载完毕，耗时{}".format(time2 - time1))
