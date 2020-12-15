@@ -1,24 +1,34 @@
 from iastar import AStar
 import numpy as np
 import math
+import random
 
+
+# def neighbors_generator(radius_inner, radius_outer, sample_n):
+#     quadrant = []
+#     result = set()
+#     for x in range(0, radius_outer + 1):
+#         for y in range(0, radius_outer + 1):
+#             if radius_inner ** 2 <= x ** 2 + y ** 2 <= radius_outer ** 2:
+#                 if x % sample_n == 0 and y % sample_n == 0:
+#                     quadrant.append((x, y))
+#
+#     for x, y in quadrant:
+#         result.add((x, y))
+#         result.add((-x, y))
+#         result.add((x, -y))
+#         result.add((-x, -y))
+#     return list(result)
 
 def neighbors_generator(radius_inner, radius_outer, sample_n):
-    quadrant = []
-    result = set()
-    for x in range(0, radius_outer + 1):
-        for y in range(0, radius_outer + 1):
-            if radius_inner ** 2 <= x ** 2 + y ** 2 <= radius_outer ** 2:
-                if x % sample_n == 0 and y % sample_n == 0:
-                    quadrant.append((x, y))
-
-    for x, y in quadrant:
-        result.add((x, y))
-        result.add((-x, y))
-        result.add((x, -y))
-        result.add((-x, -y))
+    result=set()
+    for _ in range(sample_n):
+        degree = random.uniform(0,360)/180*np.pi
+        length = random.uniform(radius_inner,radius_outer)
+        x=round(np.cos(degree)*length)
+        y=round(np.sin(degree)*length)
+        result.add((x,y))
     return list(result)
-
 
 class pathfinder(AStar):
 
