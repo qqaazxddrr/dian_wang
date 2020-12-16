@@ -4,42 +4,43 @@ import math
 import random
 
 
-# def neighbors_generator(radius_inner, radius_outer, sample_n):
-#     quadrant = []
-#     result = set()
-#     for x in range(0, radius_outer + 1):
-#         for y in range(0, radius_outer + 1):
-#             if radius_inner ** 2 <= x ** 2 + y ** 2 <= radius_outer ** 2:
-#                 if x % sample_n == 0 and y % sample_n == 0:
-#                     quadrant.append((x, y))
-#
-#     for x, y in quadrant:
-#         result.add((x, y))
-#         result.add((-x, y))
-#         result.add((x, -y))
-#         result.add((-x, -y))
-#     return list(result)
-
 def neighbors_generator(radius_inner, radius_outer, sample_n):
-    result=set()
-    for _ in range(sample_n):
-        degree = random.uniform(0,360)/180*np.pi
-        length = random.uniform(radius_inner,radius_outer)
-        x=round(np.cos(degree)*length)
-        y=round(np.sin(degree)*length)
-        result.add(((int(x)),(int(y))))
+    quadrant = []
+    result = set()
+    for x in range(0, radius_outer + 1):
+        for y in range(0, radius_outer + 1):
+            if radius_inner ** 2 <= x ** 2 + y ** 2 <= radius_outer ** 2:
+                if x % sample_n == 0 and y % sample_n == 0:
+                    quadrant.append((x, y))
+
+    for x, y in quadrant:
+        result.add((x, y))
+        result.add((-x, y))
+        result.add((x, -y))
+        result.add((-x, -y))
     return list(result)
+
+# def neighbors_generator(radius_inner, radius_outer, sample_n):
+#     result=set()
+#     for _ in range(sample_n):
+#         degree = random.uniform(0,360)/180*np.pi
+#         length = random.uniform(radius_inner,radius_outer)
+#         x=round(np.cos(degree)*length)
+#         y=round(np.sin(degree)*length)
+#         result.add(((int(x)),(int(y))))
+#     return list(result)
 
 class pathfinder(AStar):
 
     """sample use of the astar algorithm. In this exemple we work on a maze made of ascii characters,
     and a 'node' is just a (x,y) tuple that represents a reachable position"""
 
-    def __init__(self, gridMap, neigh_range, sample_n, roads=None, com_lines=None):
+    def __init__(self, seed, gridMap, neigh_range, sample_n, roads=None, com_lines=None):
         super().__init__(neigh_range, roads, com_lines, gridMap)
         self.gridMap = gridMap
         self.height, self.width = np.array(gridMap).shape
         self.neighbors_coordinate = neighbors_generator(neigh_range[0], neigh_range[1], sample_n)
+        random.seed(seed)
 
     def heuristic_cost_estimate(self, n1, n2):
         """computes the 'direct' distance between two (x,y) tuples"""

@@ -6,7 +6,7 @@ import random
 import time
 
 
-def run(start, end, neigh_range, sample_n, gridMap, background):
+def run(seed, start, end, neigh_range, sample_n, gridMap, background):
     # time1 = time.time()
     # gridMap = np.load('../res/sampled_sketch.npy')
     # gridMap = np.load('map.npy')
@@ -27,7 +27,7 @@ def run(start, end, neigh_range, sample_n, gridMap, background):
     print("maze shape:{},{}".format(gridMap.shape[0],gridMap.shape[1]))
     print("类型：起点:{},终点:{}".format(gridMap[start[1]][start[0]],gridMap[end[1]][end[0]]))
     time3 = time.time()
-    finder = pathfinder(gridMap, neigh_range, sample_n)
+    finder = pathfinder(seed, gridMap, neigh_range, sample_n)
     path = list(finder.astar(start, end))
     time4 = time.time()
     print("寻路完毕,耗时{}".format(time4 - time3))
@@ -47,18 +47,19 @@ def run(start, end, neigh_range, sample_n, gridMap, background):
     #     cv2.circle(background, p, 3, (0, 255, 0))
     plt.imshow(background)
 
-    plt.savefig("../output/fig1210_{}_{}_{}.jpg".format(neigh_range[0], neigh_range[1],str(round(time.time()))[-5:]))
+    plt.savefig("../output/fig1216_{}_{}_{}.jpg".format(neigh_range[0], neigh_range[1],str(round(time.time()))[-5:]))
     plt.show()
-    np.save("../output/path_1211_{}.npy".format(str(round(time.time()))[-5:]), np.array(path))
+    np.save("../output/path_1216_{}.npy".format(str(round(time.time()))[-5:]), np.array(path))
     time4 = time.time()
     print("算法完毕,总耗时{}".format(time4 - time1))
 
 
 if __name__ == "__main__":
+    seed = 0
     start = (0, 9044)
-    end = (11690, 0)
+    end = (10000, 3900)
     neigh_range = (200, 250)
-    sample_n = 20
+    sample_n = 10
     time1 = time.time()
     gridMap = np.load('../../res/v1/sampled_sketch.npy')
     gridMap.astype(int)
@@ -66,4 +67,4 @@ if __name__ == "__main__":
     background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
     time2 = time.time()
     print("图片加载完毕，耗时{}".format(time2 - time1))
-    run(start, end, neigh_range, sample_n, gridMap, background)
+    run(seed, start, end, neigh_range, sample_n, gridMap, background)

@@ -7,6 +7,7 @@ import math
 import numpy as np
 from bresenham import bresenham
 from tqdm import tqdm
+import random
 
 Infinite = float('inf')
 
@@ -82,11 +83,37 @@ class AStar:
 
     # 判断路径中是否存在第四类地块
     def is_forbiddenzoom_in_between(self, n1, n2):
-        route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
+        # --------- version 1--------------#
+        # route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
+        # for p in route:
+        #     if self.map[p[1]][p[0]] == 4:
+        #         return True
+        # return False
+        # --------- version 2--------------#
+        # route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
+        # sample = route[int(len(route)/2)]
+        # if self.map[sample[1]][sample[0]] == 4:
+        #     return True
+        # return False
+        # --------- version 3--------------#
+        # sample = [int((n1[0] + n2[0])/2), int((n1[1] + n2[1])/2)]
+        # if self.map[sample[1]][sample[0]] == 4:
+        #     return True
+        # return False
+        # --------- version 4--------------#
+        n = 10            # 10等分
+        route = []
+        delta_x = int((n2[0] - n1[0]) / n)
+        delta_y = int((n2[1] - n1[1]) / n)
+        for i in range(1,10):
+            route.append((n1[0]+i*delta_x, n1[1]+i*delta_y))
         for p in route:
             if self.map[p[1]][p[0]] == 4:
                 return True
         return False
+
+
+
 
     # 判断是否符合道路约束条件，相交且夹角<75度为False，其他情况为True
     def road_condition(self, n1, n2):
@@ -160,7 +187,7 @@ class AStar:
     def astar(self, start, goal, reversePath=False):
         process_max = 0
         pbar = tqdm(total=100)
-        dis_total = self.distance_between(start,goal)
+        dis_total = self.distance_between(start, goal)
         if self.is_goal_reached(start, goal):
             return [start]
         searchNodes = AStar.SearchNodeDict()
@@ -171,10 +198,10 @@ class AStar:
         while openSet:
             current = heappop(openSet)
             # 进度条显示
-            dis_now = self.distance_between(current.data,goal)
-            process_now = round((1-dis_now/dis_total)*100)
-            if process_now>process_max:
-                process_max=process_now
+            dis_now = self.distance_between(current.data, goal)
+            process_now = round((1 - dis_now / dis_total) * 100)
+            if process_now > process_max:
+                process_max = process_now
                 pbar.n = process_now
                 pbar.refresh()
             # -------------- #
@@ -194,9 +221,9 @@ class AStar:
                 if self.com_lines is not None:
                     if not self.com_condition(current.data, neighbor.data):
                         continue
-                # if self.map is not None:
-                #     if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
-                #         continue
+                if self.map is not None:
+                    if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
+                        continue
                 if not current.start:
                     degree = angle_computing(neighbor.data, current.data)
                     if abs(degree - current.father_angle) >= 90:
