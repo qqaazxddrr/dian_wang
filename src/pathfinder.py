@@ -27,7 +27,7 @@ def neighbors_generator(radius_inner, radius_outer, sample_n):
         length = random.uniform(radius_inner,radius_outer)
         x=round(np.cos(degree)*length)
         y=round(np.sin(degree)*length)
-        result.add((x,y))
+        result.add(((int(x)),(int(y))))
     return list(result)
 
 class pathfinder(AStar):
