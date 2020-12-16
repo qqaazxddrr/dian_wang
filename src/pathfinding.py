@@ -61,6 +61,7 @@ if __name__ == "__main__":
     sample_n = 20
     time1 = time.time()
     gridMap = np.load('../../res/v1/sampled_sketch.npy')
+    gridMap.astype(int)
     background = cv2.imread("../../res/v1/sampled_map.png")
     background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
     time2 = time.time()

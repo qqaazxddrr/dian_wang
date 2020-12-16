@@ -62,5 +62,4 @@ class pathfinder(AStar):
         # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.height and 0 <= ny < self.width and self.maze[nx][ny] == 0]
         # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height and self.maze[nx][ny] == 0]
         filter1 = [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height]
-        print(filter1)
         return [i for i in filter1 if self.gridMap[i[1]][i[0]] == 1]
