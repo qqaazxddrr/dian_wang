@@ -84,11 +84,11 @@ class AStar:
     # 判断路径中是否存在第四类地块
     def is_forbiddenzoom_in_between(self, n1, n2):
         # --------- version 1--------------#
-        # route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
-        # for p in route:
-        #     if self.map[p[1]][p[0]] == 4:
-        #         return True
-        # return False
+        route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
+        for p in route:
+            if self.map[p[1]][p[0]] == 4:
+                return True
+        return False
         # --------- version 2--------------#
         # route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
         # sample = route[int(len(route)/2)]
@@ -101,16 +101,16 @@ class AStar:
         #     return True
         # return False
         # --------- version 4--------------#
-        n = 10            # 10等分
-        route = []
-        delta_x = int((n2[0] - n1[0]) / n)
-        delta_y = int((n2[1] - n1[1]) / n)
-        for i in range(1,10):
-            route.append((n1[0]+i*delta_x, n1[1]+i*delta_y))
-        for p in route:
-            if self.map[p[1]][p[0]] == 4:
-                return True
-        return False
+        # n = 10            # 10等分
+        # route = []
+        # delta_x = int((n2[0] - n1[0]) / n)
+        # delta_y = int((n2[1] - n1[1]) / n)
+        # for i in range(1,10):
+        #     route.append((n1[0]+i*delta_x, n1[1]+i*delta_y))
+        # for p in route:
+        #     if self.map[p[1]][p[0]] == 4:
+        #         return True
+        # return False
 
 
 
