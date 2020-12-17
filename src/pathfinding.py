@@ -48,7 +48,7 @@ def run(seed, start, end, neigh_range, sample_n, gridMap, background):
     time4 = time.time()
     print("寻路完毕,耗时{}".format(time4 - time3))
     # maze_viz = cv2.cvtColor(maze, cv2.COLOR_GRAY2RGB)
-    background = cv2.imread("../res/sampled_map.png")
+    background = cv2.imread("../../res/v1/sampled_map.png")
     background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
     p1 = path[0]
     for index, p in enumerate(path):
@@ -77,8 +77,8 @@ if __name__ == "__main__":
     dis_list=[]
     start = (0, 9044)
     end = (10000, 3900)
-    neigh_range = (300, 400)
-    sample_n = 50
+    neigh_range = (300, 350)
+    sample_n = 25
     time1 = time.time()
     gridMap = np.load('../../res/v1/sampled_sketch.npy')
     gridMap.astype(int)
