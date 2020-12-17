@@ -4,6 +4,7 @@ import cv2
 from pathfinder import pathfinder
 import random
 import time
+import math
 
 
 def point_generator(gridMap, type):
@@ -46,33 +47,34 @@ def run(seed, start, end, neigh_range, sample_n, gridMap, background):
     path = list(finder.astar(start, end))
     time4 = time.time()
     print("寻路完毕,耗时{}".format(time4 - time3))
-    # maze_viz = cv2.cvtColor(maze, cv2.COLOR_GRAY2RGB)
-    # background = cv2.imread("../res/sampled_map.png")
-    # background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
-    p1 = path[0]
-    for index, p in enumerate(path):
-        if index == 0:
-            continue
-        p2 = p
-        cv2.line(background, p1, p2, (255, 0, 0), 40)
-        p1 = p
-    for p in path:
-        cv2.circle(background, p, 10, (0, 0, 0), 40)
-    # for p in finder.close_set:
-    #     cv2.circle(background, p, 3, (0, 255, 0))
-    plt.imshow(background)
-
-    plt.savefig("../output/fig1217_{}_{}_{}.jpg".format(neigh_range[0], neigh_range[1], str(round(time.time()))[-5:]))
-    plt.show()
-    np.save("../output/path_1217_{}.npy".format(str(round(time.time()))[-5:]), np.array(path))
-    time4 = time.time()
-    print("算法完毕,总耗时{}".format(time4 - time1))
+    # # maze_viz = cv2.cvtColor(maze, cv2.COLOR_GRAY2RGB)
+    # # background = cv2.imread("../res/sampled_map.png")
+    # # background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
+    # p1 = path[0]
+    # for index, p in enumerate(path):
+    #     if index == 0:
+    #         continue
+    #     p2 = p
+    #     cv2.line(background, p1, p2, (255, 0, 0), 40)
+    #     p1 = p
+    # for p in path:
+    #     cv2.circle(background, p, 10, (0, 0, 0), 40)
+    # # for p in finder.close_set:
+    # #     cv2.circle(background, p, 3, (0, 255, 0))
+    # plt.imshow(background)
+    #
+    # plt.savefig("../output/fig1217_{}_{}_{}.jpg".format(neigh_range[0], neigh_range[1], str(round(time.time()))[-5:]))
+    # plt.show()
+    # np.save("../output/path_1217_{}.npy".format(str(round(time.time()))[-5:]), np.array(path))
+    # time4 = time.time()
+    # print("算法完毕,总耗时{}".format(time4 - time1))
     return time4 - time3
 
 
 if __name__ == "__main__":
     seed = 0
     time_list=[]
+    dis_list=[]
     # start = (0, 9044)
     # end = (10000, 3900)
     neigh_range = (200, 250)
@@ -84,9 +86,13 @@ if __name__ == "__main__":
         s_x, s_y, e_x, e_y = se_generator(gridMap)
         start = (s_y, s_x)
         end = (e_y, e_x)
+        dis = math.hypot(s_y - s_x, e_y - e_x)
+        dis_list.append(dis)
+        print("距离为：{}".format(dis))
         background = cv2.imread("../../res/v1/sampled_map.png")
         background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
         time2 = time.time()
         print("图片加载完毕，耗时{}".format(time2 - time1))
         time_list.append(run(seed, start, end, neigh_range, sample_n, gridMap, background))
+    print(dis_list)
     print(time_list)
