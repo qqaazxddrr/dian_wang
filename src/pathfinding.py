@@ -63,7 +63,7 @@ def run(seed, start, end, neigh_range, sample_n, gridMap, background):
     #     cv2.circle(background, p, 3, (0, 255, 0))
     plt.imshow(background)
 
-    plt.savefig("../output/fig1217_{}_{}_{}.jpg".format(neigh_range[0], neigh_range[1], str(round(time.time()))[-5:]))
+    plt.savefig("../output/fig1217_{}_{}_{}.png".format(neigh_range[0], neigh_range[1], str(round(time.time()))[-5:]))
     plt.show()
     np.save("../output/path_1217_{}.npy".format(str(round(time.time()))[-5:]), np.array(path))
     time4 = time.time()
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     dis_list=[]
     start = (0, 9044)
     end = (10000, 3900)
-    neigh_range = (300, 350)
+    neigh_range = (300, 400)
     sample_n = 50
     time1 = time.time()
     gridMap = np.load('../../res/v1/sampled_sketch.npy')
