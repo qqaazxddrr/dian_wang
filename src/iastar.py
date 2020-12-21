@@ -80,8 +80,9 @@ class AStar:
         self.com_lines = com_lines
         self.map = gridMap
         self.neigh_range = neigh_range
-        self.sample_openset = 10  # 从openset抽样节点的个数，防止一块区域重复采样
-        self.delay = 100        # 延迟一段时间后再去将新加节点与openset中的点做比较
+        # self.sample_openset = 10  # 从openset抽样节点的个数，防止一块区域重复采样
+        # self.delay = 100        # 延迟一段时间后再去将新加节点与openset中的点做比较
+        self.openset_size = 500 # 设定一个固定大小的openset
 
     # 判断路径中是否存在第四类地块
     def is_forbiddenzoom_in_between(self, n1, n2):
@@ -219,7 +220,7 @@ class AStar:
             nei_tmp = self.neighbors(current.data)
             for neighbor in map(lambda n: searchNodes[n], nei_tmp):
 
-                # ------------------------------------- #
+                # -----------------openset取样-------------------- #
                 # if len(openSet)>self.sample_openset and len(openSet)>self.delay:
                 #     flag = False
                 #     for openset_sample in random.sample(openSet, self.sample_openset):
@@ -256,13 +257,16 @@ class AStar:
                 neighbor.fscore = tentative_gscore + \
                                   self.heuristic_cost_estimate(neighbor.data, goal)
                 neighbor.father_angle = angle_computing(neighbor.data, current.data)
-                if neighbor.out_openset:
-                    neighbor.out_openset = False
-                    heappush(openSet, neighbor)
-                else:
-                    # re-add the node in order to re-sort the heap
-                    openSet.remove(neighbor)
-                    heappush(openSet, neighbor)
+
+                if len(openSet)>self.openset_size:
+                    heappop(openSet)
+                    if neighbor.out_openset:
+                        neighbor.out_openset = False
+                        heappush(openSet, neighbor)
+                    else:
+                        # re-add the node in order to re-sort the heap
+                        openSet.remove(neighbor)
+                        heappush(openSet, neighbor)
         return None
 
 
