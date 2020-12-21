@@ -80,6 +80,8 @@ class AStar:
         self.com_lines = com_lines
         self.map = gridMap
         self.neigh_range = neigh_range
+        self.sample_openset = 10  # 从openset抽样节点的个数，防止一块区域重复采样
+        self.delay = 100        # 延迟一段时间后再去将新加节点与openset中的点做比较
 
     # 判断路径中是否存在第四类地块
     def is_forbiddenzoom_in_between(self, n1, n2):
@@ -182,7 +184,7 @@ class AStar:
         if reversePath:
             return _gen()
         else:
-            return reversed(list(_gen()))
+            return reversed(list(_gen())), list(self.close_set)
 
     def astar(self, start, goal, reversePath=False):
         process_max = 0
@@ -204,6 +206,7 @@ class AStar:
                 process_max = process_now
                 pbar.n = process_now
                 pbar.refresh()
+                print("目前OpenSet大小为：{}".format(len(openSet)))
             # -------------- #
             self.close_set.add(current.data)
             if self.is_goal_reached(current.data, goal):
@@ -215,6 +218,20 @@ class AStar:
             current.closed = True
             nei_tmp = self.neighbors(current.data)
             for neighbor in map(lambda n: searchNodes[n], nei_tmp):
+
+                # ------------------------------------- #
+                # if len(openSet)>self.sample_openset and len(openSet)>self.delay:
+                #     flag = False
+                #     for openset_sample in random.sample(openSet, self.sample_openset):
+                #         dis = self.distance_between(current.data, openset_sample.data)
+                #         if dis < self.neigh_range[1]:
+                #             flag = True
+                #             break
+                #     if flag:
+                #         continue
+                # ------------------------------------- #
+
+
                 if self.roads is not None:
                     if not self.road_condition(current.data, neighbor.data):
                         continue
