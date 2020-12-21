@@ -2,7 +2,7 @@
 """ generic A-Star path searching algorithm """
 
 from abc import ABCMeta, abstractmethod
-from heapq import heappush, heappop, heapify
+from heapq import heappush, heappop, heapify, nlargest
 import math
 import numpy as np
 from bresenham import bresenham
@@ -185,7 +185,7 @@ class AStar:
         if reversePath:
             return _gen()
         else:
-            return reversed(list(_gen())), list(self.close_set)
+            return list(reversed(list(_gen()))), list(self.close_set)
 
     def astar(self, start, goal, reversePath=False):
         process_max = 0
@@ -258,15 +258,21 @@ class AStar:
                                   self.heuristic_cost_estimate(neighbor.data, goal)
                 neighbor.father_angle = angle_computing(neighbor.data, current.data)
 
-                if len(openSet)>self.openset_size:
-                    heappop(openSet)
-                    if neighbor.out_openset:
-                        neighbor.out_openset = False
-                        heappush(openSet, neighbor)
-                    else:
-                        # re-add the node in order to re-sort the heap
-                        openSet.remove(neighbor)
-                        heappush(openSet, neighbor)
+                if neighbor.out_openset:
+                    neighbor.out_openset = False
+                    heappush(openSet, neighbor)
+                else:
+                    # re-add the node in order to re-sort the heap
+                    openSet.remove(neighbor)
+                    heappush(openSet, neighbor)
+
+                if len(openSet) > self.openset_size:
+                    # heappop(openSet)
+                    max_openset = max(openSet)
+                    max_openset.out_openset = True
+                    max_openset.closed = True
+                    self.close_set.add(max_openset.data)
+                    openSet.remove(max_openset)
         return None
 
 
