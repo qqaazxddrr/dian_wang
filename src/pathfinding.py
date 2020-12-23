@@ -62,6 +62,7 @@ def run(seed, start, end, neigh_range, gridMap, background, openset_size, length
         for p in close_list:
             cv2.circle(background, p, 20, (255, 0, 0), 2)
         plt.imshow(background)
+        plt.savefig("../output/fail_fig1223_{}_{}_{}.png".format(neigh_range[0], neigh_range[1], str(round(time.time()))[-5:]))
         plt.show()
         return -1
     time4 = time.time()
