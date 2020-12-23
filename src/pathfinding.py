@@ -6,6 +6,18 @@ import random
 import time
 import math
 
+DL = 1      # 1 道路
+SX = 2      # 2 水系
+FW = 3      # 3 房屋(居民用地)
+JZYD = 4    # 4 建设用地
+NT = 5      # 5 农田
+LM = 6      # 6 林木
+class1 = [5, 6]
+class2 = [2]
+class3 = [3, 1]
+class4 = [4]
+
+
 
 def point_generator(gridMap, type):
     X, Y = gridMap.shape
@@ -22,7 +34,7 @@ def se_generator(gridMap):
     return s_x, s_y, e_x, e_y
 
 
-def run(seed, start, end, neigh_range, sample_n, gridMap, background):
+def run(seed, start, end, neigh_range, gridMap, background, openset_size, length_part, degree_delta):
     # time1 = time.time()
     # gridMap = np.load('../res/sampled_sketch.npy')
     # gridMap = np.load('map.npy')
@@ -43,13 +55,17 @@ def run(seed, start, end, neigh_range, sample_n, gridMap, background):
     print("maze shape:{},{}".format(gridMap.shape[0], gridMap.shape[1]))
     print("类型：起点:{},终点:{}".format(gridMap[start[1]][start[0]], gridMap[end[1]][end[0]]))
     time3 = time.time()
-    finder = pathfinder(seed, gridMap, neigh_range, sample_n)
+    finder = pathfinder(seed, gridMap, neigh_range, openset_size=openset_size, length_part=length_part, degree_delta=degree_delta)
     path, close_list = finder.astar(start, end)
+    if path is None:
+        print("查找失败，无解")
+        for p in close_list:
+            cv2.circle(background, p, 20, (255, 0, 0), 2)
+        plt.imshow(background)
+        plt.show()
+        return -1
     time4 = time.time()
     print("寻路完毕,耗时{}".format(time4 - time3))
-    # maze_viz = cv2.cvtColor(maze, cv2.COLOR_GRAY2RGB)
-    background = cv2.imread("../../res/v1/sampled_map.png")
-    background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
     p1 = path[0]
     for p in close_list:
         cv2.circle(background, p, 10, (0, 0, 255), 5)
@@ -65,9 +81,9 @@ def run(seed, start, end, neigh_range, sample_n, gridMap, background):
     #     cv2.circle(background, p, 3, (0, 255, 0))
     plt.imshow(background)
 
-    plt.savefig("../output/fig1217_{}_{}_{}.png".format(neigh_range[0], neigh_range[1], str(round(time.time()))[-5:]))
+    plt.savefig("../output/fig1222_{}_{}_{}.png".format(neigh_range[0], neigh_range[1], str(round(time.time()))[-5:]))
     plt.show()
-    np.save("../output/path_1217_{}.npy".format(str(round(time.time()))[-5:]), np.array(path))
+    np.save("../output/path_1222_{}.npy".format(str(round(time.time()))[-5:]), np.array(path))
     time4 = time.time()
     print("算法完毕,总耗时{}".format(time4 - time1))
     return time4 - time3
@@ -77,12 +93,14 @@ if __name__ == "__main__":
     seed = 0
     time_list=[]
     dis_list=[]
-    start = (0, 9044)
-    end = (10000, 3900)
-    neigh_range = (100, 250)
-    sample_n = 25
+    start = (8300, 8000)
+    end = (8400, 3500)
+    neigh_range = (100, 150)
+    openset_size = 800
+    length_part = 2
+    degree_delta = 10
     time1 = time.time()
-    gridMap = np.load('../../res/v1/sampled_sketch.npy')
+    gridMap = np.load("../../res/v4/Label_1m/sketch.npy")
     gridMap.astype(int)
     for _ in range(1):
         # s_x, s_y, e_x, e_y = se_generator(gridMap)
@@ -91,8 +109,8 @@ if __name__ == "__main__":
         dis = math.hypot(10000, 3900-9044)
         # dis_list.append(dis)
         print("距离为：{}".format(dis))
-        background = cv2.imread("../../res/v1/sampled_map.png")
+        background = cv2.imread("../../res/v4/Label_1m/background.png")
         background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
         time2 = time.time()
         print("图片加载完毕，耗时{}".format(time2 - time1))
-        time_list.append(run(seed, start, end, neigh_range, sample_n, gridMap, background))
+        time_list.append(run(seed, start, end, neigh_range, gridMap, background, openset_size, length_part, degree_delta))

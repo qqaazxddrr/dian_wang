@@ -10,6 +10,10 @@ from tqdm import tqdm
 import random
 
 Infinite = float('inf')
+class1 = [5, 6]
+class2 = [2]
+class3 = [3, 1]
+class4 = [4]
 
 
 def angle_computing(n1, n2):
@@ -74,7 +78,7 @@ class AStar:
             return v
 
     @abstractmethod
-    def __init__(self, neigh_range, roads, com_lines, gridMap):
+    def __init__(self, neigh_range, roads, com_lines, gridMap, openset_size):
         self.close_set = set()
         self.roads = roads
         self.com_lines = com_lines
@@ -82,14 +86,14 @@ class AStar:
         self.neigh_range = neigh_range
         # self.sample_openset = 10  # 从openset抽样节点的个数，防止一块区域重复采样
         # self.delay = 100        # 延迟一段时间后再去将新加节点与openset中的点做比较
-        self.openset_size = 500 # 设定一个固定大小的openset
+        self.openset_size = openset_size # 设定一个固定大小的openset
 
     # 判断路径中是否存在第四类地块
     def is_forbiddenzoom_in_between(self, n1, n2):
         # --------- version 1--------------#
         route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
         for p in route:
-            if self.map[p[1]][p[0]] == 4:
+            if self.map[p[1]][p[0]] in class4:
                 return True
         return False
         # --------- version 2--------------#
@@ -172,7 +176,8 @@ class AStar:
     def is_goal_reached(self, current, goal):
         """ returns true when we can consider that 'current' is the goal"""
         dis = self.distance_between(current, goal)
-        if self.neigh_range[0] <= dis <= self.neigh_range[1]:
+        # if self.neigh_range[0] <= dis <= self.neigh_range[1]:
+        if dis <= self.neigh_range[1]:
             return True
 
     def reconstruct_path(self, last, reversePath=False):
@@ -192,7 +197,7 @@ class AStar:
         pbar = tqdm(total=100)
         dis_total = self.distance_between(start, goal)
         if self.is_goal_reached(start, goal):
-            return [start]
+            return [start], None
         searchNodes = AStar.SearchNodeDict()
         startNode = searchNodes[start] = AStar.SearchNode(
             start, gscore=.0, fscore=self.heuristic_cost_estimate(start, goal), start=True)
@@ -273,7 +278,7 @@ class AStar:
                     max_openset.closed = True
                     self.close_set.add(max_openset.data)
                     openSet.remove(max_openset)
-        return None
+        return None, list(self.close_set)
 
 
 def find_path(start, goal, neighbors_fnct, reversePath=False, heuristic_cost_estimate_fnct=lambda a, b: Infinite,

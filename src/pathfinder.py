@@ -3,6 +3,10 @@ import numpy as np
 import math
 import random
 
+class1 = [5, 6]
+class2 = [2]
+class3 = [3, 1]
+class4 = [4]
 
 
 # def neighbors_generator(radius_inner, radius_outer, sample_n):
@@ -32,10 +36,14 @@ import random
 #     return list(result)
 
 
-def neighbors_generator_v2(radius_inner, radius_outer, sample_n):
-    result=set()
-    lengths = [radius_inner, radius_outer, int((radius_inner+radius_outer)/2)]
-    for degree in range(0,360,60):
+def neighbors_generator_v2(radius_inner, radius_outer, length_part, degree_delta):
+    result = set()
+    length_delta = int((radius_outer - radius_inner)/length_part)
+    lengths = []
+    for i in range(length_part):
+        lengths.append(i*length_delta+radius_inner)
+    # lengths = [radius_inner, radius_outer, int((radius_inner+radius_outer)/2)]
+    for degree in range(0,360,degree_delta):
         for length in lengths:
             x = int(np.cos(degree/180*np.pi) * length)
             y = int(np.sin(degree / 180 * np.pi) * length)
@@ -50,11 +58,11 @@ class pathfinder(AStar):
     """sample use of the astar algorithm. In this exemple we work on a maze made of ascii characters,
     and a 'node' is just a (x,y) tuple that represents a reachable position"""
 
-    def __init__(self, seed, gridMap, neigh_range, sample_n, roads=None, com_lines=None):
-        super().__init__(neigh_range, roads, com_lines, gridMap)
+    def __init__(self, seed, gridMap, neigh_range, length_part=10, degree_delta=10, roads=None, com_lines=None, openset_size=800):
+        super().__init__(neigh_range, roads, com_lines, gridMap, openset_size)
         self.gridMap = gridMap
         self.height, self.width = np.array(gridMap).shape
-        self.neighbors_coordinate = neighbors_generator_v2(neigh_range[0], neigh_range[1], sample_n)
+        self.neighbors_coordinate = neighbors_generator_v2(neigh_range[0], neigh_range[1], length_part, degree_delta)
         random.seed(seed)
 
     def heuristic_cost_estimate(self, n1, n2):
@@ -78,4 +86,4 @@ class pathfinder(AStar):
         # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.height and 0 <= ny < self.width and self.maze[nx][ny] == 0]
         # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height and self.maze[nx][ny] == 0]
         filter1 = [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height]
-        return [i for i in filter1 if self.gridMap[i[1]][i[0]] == 1 or self.gridMap[i[1]][i[0]] == 2]
+        return [i for i in filter1 if self.gridMap[i[1]][i[0]] in class1 or self.gridMap[i[1]][i[0]] in class2]
