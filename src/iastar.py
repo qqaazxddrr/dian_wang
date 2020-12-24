@@ -8,6 +8,7 @@ import numpy as np
 from bresenham import bresenham
 from tqdm import tqdm
 import random
+import time
 
 Infinite = float('inf')
 class1 = [5, 6]
@@ -87,15 +88,16 @@ class AStar:
         # self.sample_openset = 10  # 从openset抽样节点的个数，防止一块区域重复采样
         # self.delay = 100        # 延迟一段时间后再去将新加节点与openset中的点做比较
         self.openset_size = openset_size # 设定一个固定大小的openset
+        self.time_restrict = 600
 
-    # 判断路径中是否存在第四类地块
-    def is_forbiddenzoom_in_between(self, n1, n2):
-        # --------- version 1--------------#
-        route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
-        for p in route:
-            if self.map[p[1]][p[0]] in class4:
-                return True
-        return False
+    # # 判断路径中是否存在第四类地块
+    # def is_forbiddenzoom_in_between(self, n1, n2):
+    #     # --------- version 1--------------#
+    #     route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
+    #     for p in route:
+    #         if self.map[p[1]][p[0]] in class4:
+    #             return True
+    #     return False
         # --------- version 2--------------#
         # route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
         # sample = route[int(len(route)/2)]
@@ -193,6 +195,7 @@ class AStar:
             return list(reversed(list(_gen()))), list(self.close_set)
 
     def astar(self, start, goal, reversePath=False):
+        time1 = time.time()
         process_max = 0
         pbar = tqdm(total=100)
         dis_total = self.distance_between(start, goal)
@@ -215,6 +218,8 @@ class AStar:
                 print("目前OpenSet大小为：{}".format(len(openSet)))
             # -------------- #
             self.close_set.add(current.data)
+            if time.time()-time1 > self.time_restrict:
+                return None, list(self.close_set)
             if self.is_goal_reached(current.data, goal):
                 pbar.n = 100
                 pbar.refresh()
@@ -237,16 +242,15 @@ class AStar:
                 #         continue
                 # ------------------------------------- #
 
-
                 if self.roads is not None:
                     if not self.road_condition(current.data, neighbor.data):
                         continue
                 if self.com_lines is not None:
                     if not self.com_condition(current.data, neighbor.data):
                         continue
-                if self.map is not None:
-                    if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
-                        continue
+                # if self.map is not None:
+                #     if self.is_forbiddenzoom_in_between(current.data, neighbor.data):
+                #         continue
                 if not current.start:
                     degree = angle_computing(neighbor.data, current.data)
                     if abs(degree - current.father_angle) >= 90:

@@ -2,6 +2,8 @@ from iastar import AStar
 import numpy as np
 import math
 import random
+from bresenham import bresenham
+
 
 class1 = [5, 6]
 class2 = [2]
@@ -77,6 +79,15 @@ class pathfinder(AStar):
         (x2, y2) = n2
         return math.hypot(x2 - x1, y2 - y1)
 
+    # 判断路径中是否存在第四类地块
+    def is_forbiddenzoom_in_between(self, n1, n2):
+        # --------- version 1--------------#
+        route = list(bresenham(n1[0], n1[1], n2[0], n2[1]))
+        for p in route:
+            if self.gridMap[p[1]][p[0]] in class4:
+                return True
+        return False
+
     def neighbors(self, node):
         """ for a given coordinate in the maze, returns up to 4 adjacent(north,east,south,west)
             nodes that can be reached (=any adjacent coordinate that is not a wall)
@@ -86,4 +97,7 @@ class pathfinder(AStar):
         # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.height and 0 <= ny < self.width and self.maze[nx][ny] == 0]
         # return [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height and self.maze[nx][ny] == 0]
         filter1 = [(nx, ny) for nx, ny in neighbors if 0 <= nx < self.width and 0 <= ny < self.height]
-        return [i for i in filter1 if self.gridMap[i[1]][i[0]] in class1 or self.gridMap[i[1]][i[0]] in class2]
+        filter2 = [i for i in filter1 if self.gridMap[i[1]][i[0]] in class1 or self.gridMap[i[1]][i[0]] in class2]
+        filter3 = [j for j in filter2 if self.is_forbiddenzoom_in_between(node, j)]
+        return filter3
+

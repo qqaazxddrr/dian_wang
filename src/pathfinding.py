@@ -5,6 +5,8 @@ from pathfinder import pathfinder
 import random
 import time
 import math
+from multiprocessing import Process
+import os
 
 DL = 1      # 1 道路
 SX = 2      # 2 水系
@@ -60,7 +62,7 @@ def run(seed, start, end, neigh_range, gridMap, background, openset_size, length
     if path is None:
         print("查找失败，无解")
         for p in close_list:
-            cv2.circle(background, p, 20, (255, 0, 0), 2)
+            cv2.circle(background, p, 5, (255, 0, 0), 2)
         plt.imshow(background)
         plt.savefig("../output/fail_fig1223_{}_{}_{}.png".format(neigh_range[0], neigh_range[1], str(round(time.time()))[-5:]))
         plt.show()
@@ -94,12 +96,12 @@ if __name__ == "__main__":
     seed = 0
     time_list=[]
     dis_list=[]
-    start = (8300, 8000)
+    start = (0, 8099)
     end = (8400, 3500)
-    neigh_range = (100, 150)
-    openset_size = 800
-    length_part = 2
-    degree_delta = 10
+    neigh_range = (500, 600)
+    openset_size = 5000
+    length_part = 10
+    degree_delta = 45
     time1 = time.time()
     gridMap = np.load("../../res/v4/Label_1m/sketch.npy")
     gridMap.astype(int)
@@ -107,11 +109,19 @@ if __name__ == "__main__":
         # s_x, s_y, e_x, e_y = se_generator(gridMap)
         # start = (s_y, s_x)
         # end = (e_y, e_x)
-        dis = math.hypot(10000, 3900-9044)
+        # dis = math.hypot(10000, 3900-9044)
         # dis_list.append(dis)
-        print("距离为：{}".format(dis))
+        # print("距离为：{}".format(dis))
         background = cv2.imread("../../res/v4/Label_1m/background.png")
         background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
         time2 = time.time()
         print("图片加载完毕，耗时{}".format(time2 - time1))
-        time_list.append(run(seed, start, end, neigh_range, gridMap, background, openset_size, length_part, degree_delta))
+        # time_list.append(run(seed, start, end, neigh_range, gridMap, background, openset_size, length_part, degree_delta))
+        p1 = Process(target=run, args=(seed, start, end, neigh_range, gridMap, background, openset_size, length_part, degree_delta))
+        p2 = Process(target=run, args=(seed, start, end, neigh_range, gridMap, background, openset_size, length_part, degree_delta))
+        print('Process will start.')
+        p1.start()
+        p2.start()
+        p1.join()
+        p2.join()
+        print('Process end.')
