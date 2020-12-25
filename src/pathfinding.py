@@ -292,20 +292,20 @@ if __name__ == "__main__":
     while True:
         manager = Manager()
         d = manager.dict()
-        for ver in range(ver_count, ver_count + multiprocessing.cpu_count()):
+        for ver in range(ver_count, ver_count + 5):
             p = Process(target=run, args=(
             ver, d, start, end, neigh_range, im, background, openset_size, length_part, degree_delta,
             roads))
             processes.append(p)
             p.start()
             print("载入进程...")
-        for i in range(ver_count, ver_count + multiprocessing.cpu_count()):
+        for i in range(ver_count, ver_count + 5):
             processes[i].join()
         for result in d.values():
             count = count + result
             # if result==1:
                 # pbar.update(1)
-        ver_count = ver_count + multiprocessing.cpu_count()
+        ver_count = ver_count + 5
         # print(d.keys())
         # print("count大小：{}".format(count))
         if count > 4:
