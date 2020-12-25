@@ -60,12 +60,11 @@ class pathfinder(AStar):
     """sample use of the astar algorithm. In this exemple we work on a maze made of ascii characters,
     and a 'node' is just a (x,y) tuple that represents a reachable position"""
 
-    def __init__(self, seed, gridMap, neigh_range, length_part=10, degree_delta=10, roads=None, com_lines=None, openset_size=800):
+    def __init__(self, ver, gridMap, neigh_range, length_part=10, degree_delta=10, roads=None, com_lines=None, openset_size=800):
         super().__init__(neigh_range, roads, com_lines, gridMap, openset_size)
         self.gridMap = gridMap
         self.height, self.width = np.array(gridMap).shape
         self.neighbors_coordinate = neighbors_generator_v2(neigh_range[0], neigh_range[1], length_part, degree_delta)
-        random.seed(seed)
 
     def heuristic_cost_estimate(self, n1, n2):
         """computes the 'direct' distance between two (x,y) tuples"""

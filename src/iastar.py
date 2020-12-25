@@ -215,7 +215,7 @@ class AStar:
                 process_max = process_now
                 pbar.n = process_now
                 pbar.refresh()
-                print("目前OpenSet大小为：{}".format(len(openSet)))
+                # print("目前OpenSet大小为：{}".format(len(openSet)))
             # -------------- #
             self.close_set.add(current.data)
             if time.time()-time1 > self.time_restrict:
