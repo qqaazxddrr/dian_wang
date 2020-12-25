@@ -8,11 +8,13 @@ from pathfinder import pathfinder
 import random
 import time
 import math
-from multiprocessing import Process
+from multiprocessing import Process, Manager
 import os
 import argparse
 from libtiff import TIFF
 from osgeo import osr, ogr
+# from tqdm import tqdm
+import multiprocessing
 
 DL = 1  # 1 道路
 SX = 2  # 2 水系
@@ -85,7 +87,8 @@ def se_generator(gridMap):
     return s_x, s_y, e_x, e_y
 
 
-def run(ver, start, end, neigh_range, gridMap, background, openset_size, length_part, degree_delta, roads=None):
+def run(_ver, _return_dict, start, end, neigh_range, gridMap, background, openset_size, length_part, degree_delta,
+        roads=None):
     # time1 = time.time()
     # gridMap = np.load('../res/sampled_sketch.npy')
     # gridMap = np.load('map.npy')
@@ -103,22 +106,22 @@ def run(ver, start, end, neigh_range, gridMap, background, openset_size, length_
     # forbidden =
 
     #     finder = pathfinder(maze, neigh_range, sample_n, [road1, road2], [com_line], gridMap)
-    print("maze shape:{},{}".format(gridMap.shape[0], gridMap.shape[1]))
-    print("类型：起点:{},终点:{}".format(gridMap[start[1]][start[0]], gridMap[end[1]][end[0]]))
+    # print("maze shape:{},{}".format(gridMap.shape[0], gridMap.shape[1]))
+    # print("类型：起点:{},终点:{}".format(gridMap[start[1]][start[0]], gridMap[end[1]][end[0]]))
     time3 = time.time()
     plt.figure()
-    finder = pathfinder(ver, gridMap, neigh_range, openset_size=openset_size, length_part=length_part,
+    finder = pathfinder(_ver, gridMap, neigh_range, openset_size=openset_size, length_part=length_part,
                         degree_delta=degree_delta, roads=roads)
     path, close_list = finder.astar(start, end)
     if path is None:
-        print("查找失败，无解")
+        # print("查找失败，无解")
         for p in close_list:
             cv2.circle(background, p, 5, (255, 0, 0), 2)
         plt.imshow(background)
         plt.savefig("output/{}/fail_fig_{}_{}_{}_ver{}.png".format(unique_tag, neigh_range[0], neigh_range[1],
-                                                                       str(round(time.time()))[-5:], ver))
-        plt.show()
-        return -1
+                                                                   str(round(time.time()))[-5:], _ver))
+        _return_dict[_ver] = 0
+        return False
     time4 = time.time()
     print("寻路完毕,耗时{}".format(time4 - time3))
     p1 = path[0]
@@ -137,12 +140,12 @@ def run(ver, start, end, neigh_range, gridMap, background, openset_size, length_
     plt.imshow(background)
 
     plt.savefig(
-        "output/{}/fig_{}_{}_{}_ver{}.png".format(unique_tag, neigh_range[0], neigh_range[1], str(round(time.time()))[-5:],
-                                                      ver))
-    plt.show()
-    np.save("output/{}/path__{}_ver{}.npy".format(unique_tag, str(round(time.time()))[-5:]), np.array(path), ver)
-    time4 = time.time()
-    return time4 - time3
+        "output/{}/fig_{}_{}_{}_ver{}.png".format(unique_tag, neigh_range[0], neigh_range[1],
+                                                  str(round(time.time()))[-5:],
+                                                  _ver))
+    np.save("output/{}/path__{}_ver{}.npy".format(unique_tag, str(round(time.time()))[-5:], _ver), np.array(path))
+    _return_dict[_ver] = 1
+    return 1
 
 
 if __name__ == "__main__":
@@ -196,19 +199,19 @@ if __name__ == "__main__":
         print("请输入搜索精确度！")
     if precision == 1:
         length_part = 5
-        degree_delta = 90   # 20
+        degree_delta = 90  # 20
     elif precision == 2:
         length_part = 10
         degree_delta = 90  # 40
     elif precision == 3:
         length_part = 10
-        degree_delta = 90   # 40
+        degree_delta = 90  # 40
     elif precision == 4:
         length_part = 5
-        degree_delta = 45   # 40
+        degree_delta = 45  # 40
     elif precision == 5:
         length_part = 10
-        degree_delta = 45   # 80
+        degree_delta = 45  # 80
     elif precision == 6:
         length_part = 20
         degree_delta = 45  # 160
@@ -218,9 +221,6 @@ if __name__ == "__main__":
     else:
         length_part = 5
         degree_delta = 90  # 20
-
-
-
 
     print("读取TIFF文件中...")
     try:
@@ -257,7 +257,7 @@ if __name__ == "__main__":
     plt.imsave("output/{}/background_tag{}.png".format(unique_tag, unique_tag), im)
     background = cv2.imread("output/{}/background_tag{}.png".format(unique_tag, unique_tag))
     background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
-    # np.save("output/sketch_tag{}.npy".format(unique_tag), im)
+    np.save("output/{}/sketch_tag{}.npy".format(unique_tag,unique_tag), im)
     print("提取道路信息...")
     driver = ogr.GetDriverByName("ESRI Shapefile")
     filename = args.road
@@ -266,19 +266,51 @@ if __name__ == "__main__":
         layer = dataSource.GetLayer(0)
     except:
         print("输入的道路文件有误！")
-    roads=road_extract(layer)
+    roads = road_extract(layer)
     print("共有{}条道路".format(len(roads)))
 
     im.astype(int)
-    processes = []
-    processes.append(Process(target=run, args=(0, start, end, neigh_range, im, background, openset_size, length_part, degree_delta)))
-    processes[0].start()
-    processes[0].join()
+
+    # processes = []
+    # for ver in range(6):
+    #     processes.append(Process(target=run, args=(ver, start, end, neigh_range, im, background, openset_size, length_part, degree_delta, roads)))
+    # for ver in range(6):
+    #     processes[ver].start()
+    # for ver in range(6):
+    #     processes[ver].join()
     # print('Process will start.')
     # for ver in range(5):
     #     processes[ver].start()
     # for ver in range(5):
     #     processes[ver].join()
     # print('Process end.')
+    print("开始跑程序...")
+    count = 0
+    ver_count = 0
+    processes = []
+    # pbar = tqdm(total=4)
+    while True:
+        manager = Manager()
+        d = manager.dict()
+        for ver in range(ver_count, ver_count + multiprocessing.cpu_count()):
+            p = Process(target=run, args=(
+            ver, d, start, end, neigh_range, im, background, openset_size, length_part, degree_delta,
+            roads))
+            processes.append(p)
+            p.start()
+            print("载入进程...")
+        for i in range(ver_count, ver_count + multiprocessing.cpu_count()):
+            processes[i].join()
+        for result in d.values():
+            count = count + result
+            # if result==1:
+                # pbar.update(1)
+        ver_count = ver_count + multiprocessing.cpu_count()
+        # print(d.keys())
+        # print("count大小：{}".format(count))
+        if count > 4:
+            # pbar.close()
+            break
+    print('Process end.')
 
     print("结束")
